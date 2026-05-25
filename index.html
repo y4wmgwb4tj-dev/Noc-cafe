@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en" x-data="nocApp()" :dir="isRtl ? 'rtl' : 'ltr'" :class="{ 'dark': darkMode }">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOC Cafe | Premium Specialty Coffee Riyadh</title>
+    <meta name="description" content="Experience modern luxury at NOC Cafe Riyadh. Premium specialty coffee, cinematic atmosphere, and artisanal pastries tailored for the visionaries.">
+    
+    <!-- Open Graph / Meta -->
+    <meta property="og:title" content="NOC Cafe | Riyadh Specialty Coffee">
+    <meta property="og:description" content="Experience modern luxury at NOC Cafe Riyadh.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1200&q=80">
+    
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Noto+Kufi+Arabic:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS & Alpine.js -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        espresso: '#110F0E',
+                        warmBeige: '#F7F4F0',
+                        creamWhite: '#FAFAFA',
+                        softBrown: '#8C7A6B',
+                        goldAccent: '#D4AF37',
+                        darkCard: '#1A1817'
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Noto+Kufi+Arabic', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        html { scroll-behavior: smooth; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #110F0E; }
+        ::-webkit-scrollbar-thumb { background: #8C7A6B; border-radius: 3px; }
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glassmorphism-light {
+            background: rgba(17, 15, 14, 0.02);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(17, 15, 14, 0.05);
+        }
+    </style>
+
+    <!-- Structured Data Business Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CafeOrCoffeeShop",
+      "name": "NOC Cafe",
+      "image": "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=80",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Olaya District",
+        "addressLocality": "Riyadh",
+        "addressRegion": "Riyadh Province",
+        "addressCountry": "SA"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": "24.7136",
+        "longitude": "46.6753"
+      },
+      "url": "https://noc-cafe.com",
+      "telephone": "+966110000000",
+      "priceRange": "$$$"
+    }
+    </script>
+</head>
+<body class="bg-creamWhite text-espresso dark:bg-espresso dark:text-creamWhite transition-colors duration-300 antialiased font-sans">
+
+    <!-- Scroll Progress Indicator -->
+    <div class="fixed top-0 left-0 h-1 bg-goldAccent z-50 transition-all duration-100" :style="'width: ' + scrollProgress + '%'"></div>
+
+    <!-- Sticky Navigation Bar -->
+    <nav class="fixed top-0 w-full z-40 transition-all duration-300" 
+         :class="scrollY > 50 ? 'bg-creamWhite/90 dark:bg-espresso/90 backdrop-blur-md shadow-sm border-b border-softBrown/10 py-4' : 'bg-transparent py-6'">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            
+            <!-- Brand Logo -->
+            <a href="#" @click.prevent="currentPage = 'home'" class="flex items-center space-x-2 tracking-widest text-2xl font-serif font-semibold">
+                <span class="text-goldAccent">NOC</span>
+                <span class="text-xs tracking-normal uppercase border-l border-softBrown/40 pl-2 ml-2 hidden sm:inline-block">Riyadh</span>
+            </a>
+
+            <!-- Navigation Links -->
+            <div class="hidden lg:flex items-center space-x-8 font-medium text-xs uppercase tracking-widest">
+                <a href="#" @click.prevent="currentPage = 'home'" class="hover:text-goldAccent transition-colors" :class="currentPage === 'home' ? 'text-goldAccent' : ''" x-text="translations[lang].navHome"></a>
+                <a href="#" @click.prevent="currentPage = 'about'" class="hover:text-goldAccent transition-colors" :class="currentPage === 'about' ? 'text-goldAccent' : ''" x-text="translations[lang].navAbout"></a>
+                <a href="#" @click.prevent="currentPage = 'menu'" class="hover:text-goldAccent transition-colors" :class="currentPage === 'menu' ? 'text-goldAccent' : ''" x-text="translations[lang].navMenu"></a>
+                <a href="#" @click.prevent="currentPage = 'gallery'" class="hover:text-goldAccent transition-colors" :class="currentPage === 'gallery' ? 'text-goldAccent' : ''" x-text="translations[lang].navGallery"></a>
+                <a href="#" @click.prevent="currentPage = 'reservation'" class="hover:text-goldAccent transition-colors" :class="currentPage === 'reservation' ? 'text-goldAccent' : ''" x-text="translations[lang].navReserve"></a>
+                <a href="#" @click.prevent="currentPage = 'contact'" class="hover:text-goldAccent transition-colors" :class="currentPage === 'contact' ? 'text-goldAccent' : ''" x-text="translations[lang].navContact"></a>
+            </div>
+
+            <!-- Utility Controls -->
+            <div class="flex items-center space-x-4">
+                <!-- Language Toggle -->
+                <button @click="toggleLanguage()" class="text-xs uppercase tracking-wider border border-softBrown/30 px-2 py-1 rounded hover:bg-softBrown/10 transition">
+                    <span x-text="lang === 'en' ? 'العربية' : 'EN'"></span>
+                </button>
+
+                <!-- Dark Mode -->
+                <button @click="darkMode = !darkMode" class="hover:text-goldAccent transition">
+                    <i class="fa-solid text-sm" :class="darkMode ? 'fa-sun' : 'fa-moon'"></i>
+                </button>
+
+                <!-- Shopping Cart Icon -->
+                <button @click="cartOpen = true" class="relative hover:text-goldAccent transition">
+                    <i class="fa-solid fa-bag-shopping text-sm"></i>
+                    <span x-show="cartCount > 0" class="absolute -top-2 -right-2 bg-goldAccent text-espresso text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center" x-text="cartCount"></span>
+                </button>
+
+                <!-- Mobile Menu Button -->
+                <button @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden hover:text-goldAccent transition">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Drawer Menu -->
+    <div x-show="mobileMenuOpen" class="fixed inset-0 z-50 lg:hidden" x-transition>
+        <div class="fixed inset-0 bg-espresso/60 backdrop-blur-sm" @click="mobileMenuOpen = false"></div>
+        <div class="fixed right-0 top-0 h-full w-64 bg-creamWhite dark:bg-darkCard p-6 shadow-xl flex flex-col justify-between">
+            <div class="space-y-6 pt-10">
+                <div class="flex justify-between items-center mb-8">
+                    <span class="font-serif tracking-widest text-xl text-goldAccent">NOC</span>
+                    <button @click="mobileMenuOpen = false"><i class="fa-solid fa-xmark text-lg"></i></button>
+                </div>
+                <div class="flex flex-col space-y-4 text-xs uppercase tracking-widest font-medium">
+                    <a href="#" @click.prevent="currentPage = 'home'; mobileMenuOpen = false" x-text="translations[lang].navHome"></a>
+                    <a href="#" @click.prevent="currentPage = 'about'; mobileMenuOpen = false" x-text="translations[lang].navAbout"></a>
+                    <a href="#" @click.prevent="currentPage = 'menu'; mobileMenuOpen = false" x-text="translations[lang].navMenu"></a>
+                    <a href="#" @click.prevent="currentPage = 'gallery'; mobileMenuOpen = false" x-text="translations[lang].navGallery"></a>
+                    <a href="#" @click.prevent="currentPage = 'reservation'; mobileMenuOpen = false" x-text="translations[lang].navReserve"></a>
+                    <a href="#" @click.prevent="currentPage = 'contact'; mobileMenuOpen = false" x-text="translations[lang].navContact"></a>
+                </div>
+            </div>
+            <div class="text-xs text-softBrown border-t border-softBrown/20 pt-4">
+                <p>Riyadh, Saudi Arabia</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PAGES SYSTEM                               -->
+    <!-- ========================================== -->
+    <main class="pt-20">
+
+        <!-- 1. HOME PAGE -->
+        <template x-if="currentPage === 'home'">
+            <div>
+                <!-- Hero Section -->
+                <section class="relative h-[92vh] flex items-center justify-center bg-espresso overflow-hidden">
+                    <div class="absolute inset-0 opacity-40 mix-blend-multiply">
+                        <img src="https://images.unsplash.com/photo-1498804103079-a6351b050096?auto=format&fit=crop&w=1920&q=80" class="w-full h-full object-cover scale-105 animate-[pulse_6s_infinite]" alt="Cinematic Coffee Stream">
+                    </div>
+                    <div class="relative z-10 max-w-4xl mx-auto text-center px-6 text-white space-y-6">
+                        <span class="text-xs uppercase tracking-[0.4em] text-goldAccent font-medium" x-text="translations[lang].heroSub"></span>
+                        <h1 class="text-4xl md:text-7xl font-serif tracking-wide leading-tight" x-text="translations[lang].heroTitle"></h1>
+                        <p class="max-w-xl mx-auto text-sm md:text-base text-creamWhite/70 font-light tracking-wide" x-text="translations[lang].heroDesc"></p>
+                        <div class="pt-6 flex flex-col sm:flex-row justify-center items-center gap-4">
+                            <button @click="currentPage = 'menu'" class="w-full sm:w-auto bg-goldAccent text-espresso font-semibold text-xs uppercase tracking-widest px-8 py-4 rounded-sm hover:bg-white hover:text-espresso transition duration-300" x-text="translations[lang].btnOrder"></button>
+                            <button @click="currentPage = 'reservation'" class="w-full sm:w-auto border border-white/30 text-white font-medium text-xs uppercase tracking-widest px-8 py-4 rounded-sm hover:bg-white hover:text-espresso transition duration-300" x-text="translations[lang].btnReserve"></button>
+                        </div>
+                    </div>
+                    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+                        <i class="fa-solid fa-chevron-down text-white/40 text-xs"></i>
+                    </div>
+                </section>
+
+                <!-- Promo Banner Dynamic Alert -->
+                <div class="bg-goldAccent/10 border-y border-goldAccent/20 text-center py-3 text-xs tracking-wider text-goldAccent uppercase font-medium">
+                    <span x-text="translations[lang].promoText"></span>
+                </div>
+
+                <!-- Signature Showcase Grid -->
+                <section class="max-w-7xl mx-auto px-6 py-24">
+                    <div class="text-center max-w-xl mx-auto mb-16 space-y-2">
+                        <span class="text-xs uppercase tracking-widest text-goldAccent font-bold">Curated Menu</span>
+                        <h2 class="text-3xl font-serif tracking-wide">Signature Masterpieces</h2>
+                        <div class="h-[1px] w-12 bg-softBrown/40 mx-auto mt-4"></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <template x-for="item in products.filter(p => p.signature)">
+                            <div class="group relative rounded-sm overflow-hidden bg-warmBeige dark:bg-darkCard border border-softBrown/10 transition-transform duration-500 hover:-translate-y-2">
+                                <div class="h-80 overflow-hidden relative">
+                                    <img :src="item.img" class="w-full h-full object-cover transition duration-700 group-hover:scale-110" :alt="item.name">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-espresso/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-6">
+                                        <button @click="addToCart(item)" class="bg-creamWhite text-espresso w-full py-3 text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-goldAccent hover:text-espresso transition">Quick Add</button>
+                                    </div>
+                                </div>
+                                <div class="p-6 flex justify-between items-start">
+                                    <div>
+                                        <h3 class="font-serif text-lg tracking-wide group-hover:text-goldAccent transition-colors" x-text="item.name"></h3>
+                                        <p class="text-xs text-softBrown mt-1" x-text="item.desc"></p>
+                                    </div>
+                                    <span class="font-serif font-medium text-goldAccent" x-text="item.price + ' SAR'"></span>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </section>
+
+                <!-- Architectural Atmosphere Experience Section -->
+                <section class="bg-espresso text-creamWhite overflow-hidden">
+                    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 items-center">
+                        <div class="p-12 lg:p-24 space-y-6">
+                            <span class="text-xs uppercase tracking-widest text-goldAccent">The Architecture</span>
+                            <h2 class="text-3xl lg:text-5xl font-serif tracking-wide leading-tight">An Oasis of Brutalist Minimalism & Luxury</h2>
+                            <p class="text-sm text-creamWhite/70 leading-relaxed font-light">Located in the heart of Riyadh, NOC Cafe marries striking contemporary minimalist lines with standard-setting specialty coffee culture. Designed by award-winning architects, our space provides a calm refuge from the dynamic pulse of the capital city.</p>
+                            <div class="pt-4">
+                                <button @click="currentPage = 'about'" class="text-xs uppercase tracking-widest border-b border-goldAccent pb-2 text-goldAccent hover:text-white transition">Discover Our Philosophy &rarr;</button>
+                            </div>
+                        </div>
+                        <div class="h-[500px] lg:h-full min-h-[500px] relative">
+                            <img src="https://images.unsplash.com/photo-1445116572660-236099ec97a0?auto=format&fit=crop&w=1000&q=80" class="w-full h-full object-cover" alt="Luxury Minimalist Interior">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Dynamic Stat Counter Component -->
+                <section class="max-w-7xl mx-auto px-6 py-20 grid grid-cols-2 md:grid-cols-4 gap-8 text-center border-b border-softBrown/10">
+                    <div>
+                        <div class="text-4xl font-serif text-goldAccent font-bold">100%</div>
+                        <div class="text-xs uppercase tracking-widest text-softBrown mt-2">Single Origin Arabica</div>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-serif text-goldAccent font-bold">88+</div>
+                        <div class="text-xs uppercase tracking-widest text-softBrown mt-2">Cupping Score Rating</div>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-serif text-goldAccent font-bold">14+</div>
+                        <div class="text-xs uppercase tracking-widest text-softBrown mt-2">Micro-Lot Roasters</div>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-serif text-goldAccent font-bold">2</div>
+                        <div class="text-xs uppercase tracking-widest text-softBrown mt-2">Riyadh Flagship Lounges</div>
+                    </div>
+                </section>
+
+                <!-- Testimonials Slider -->
+                <section class="max-w-4xl mx-auto px-6 py-24 text-center">
+                    <i class="fa-solid fa-quote-left text-3xl text-goldAccent/30 mb-6"></i>
+                    <div class="font-serif text-xl md:text-2xl italic tracking-wide text-espresso dark:text-creamWhite">
+                        "NOC Cafe isn't just about premium caffeine; it's a structural masterpiece that has fundamentally transformed Riyadh’s specialty coffee scene. The V60 Ethiopian Geisha is peerless."
+                    </div>
+                    <div class="mt-6 uppercase text-xs tracking-[0.2em] font-semibold text-softBrown">— Sultan Al-Saud, Riyadh</div>
+                </section>
+            </div>
+        </template>
+
+        <!-- 2. ABOUT PAGE -->
+        <template x-if="currentPage === 'about'">
+            <div class="max-w-7xl mx-auto px-6 py-12 space-y-20">
+                <section class="text-center max-w-2xl mx-auto space-y-4">
+                    <span class="text-xs uppercase tracking-widest text-goldAccent font-bold">Our Heritage</span>
+                    <h1 class="text-4xl font-serif tracking-wide">Pursuing the Sovereign Cup</h1>
+                    <p class="text-sm text-softBrown leading-relaxed">Founded with the core ambition to design an elevated, precise coffee journey for modern intellectuals in Saudi Arabia.</p>
+                </section>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div class="space-y-6">
+                        <h2 class="text-2xl font-serif tracking-wide">The Bean Philosophy</h2>
+                        <p class="text-sm font-light leading-relaxed text-softBrown">We source exclusively from micro-lots located above 1,800 meters. Each single-origin delivery undergoes exhaustive profile roasting assessments to highlight regional terroir features, from dense floral notes of Yirgacheffe to bold, complex profiles of Panama Geishas.</p>
+                        <blockquote class="border-l-2 border-goldAccent pl-4 italic text-xs text-softBrown bg-warmBeige dark:bg-darkCard p-4">
+                            "Precision roasting meets strict architectural discipline. We do not compromise on extraction parameters."
+                        </blockquote>
+                    </div>
+                    <div>
+                        <img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=800&q=80" class="w-full h-96 object-cover rounded-sm border border-softBrown/10" alt="Coffee Pouring Mastery">
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- 3. MENU PAGE (INTERACTIVE E-COMMERCE) -->
+        <template x-if="currentPage === 'menu'">
+            <div class="max-w-7xl mx-auto px-6 py-12">
+                <!-- Search & Filters Header -->
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-softBrown/10 pb-8 mb-8 gap-4">
+                    <div>
+                        <h1 class="text-3xl font-serif tracking-wide">The Botanical & Craft Menu</h1>
+                        <p class="text-xs text-softBrown mt-1">Select from our globally sourced single-origins and artisanal kitchen pairings.</p>
+                    </div>
+                    <!-- Search Input Box -->
+                    <div class="relative w-full md:w-64">
+                        <input type="text" x-model="searchQuery" placeholder="Search menu..." class="w-full text-xs bg-warmBeige dark:bg-darkCard border border-softBrown/20 rounded-sm px-4 py-3 focus:outline-none focus:border-goldAccent">
+                        <i class="fa-solid fa-magnifying-glass absolute right-4 top-3.5 text-xs text-softBrown"></i>
+                    </div>
+                </div>
+
+                <!-- Category Navigation Tab Bar -->
+                <div class="flex space-x-4 overflow-x-auto pb-4 mb-8 scrollbar-hide border-b border-softBrown/5">
+                    <template x-for="cat in categories">
+                        <button @click="activeCategory = cat" 
+                                class="text-xs uppercase tracking-widest font-medium whitespace-nowrap px-4 py-2 rounded-sm transition duration-300"
+                                :class="activeCategory === cat ? 'bg-espresso text-white dark:bg-white dark:text-espresso font-bold' : 'bg-warmBeige dark:bg-darkCard hover:bg-softBrown/20'"
+                                x-text="cat"></button>
+                    </template>
+                </div>
+
+                <!-- Grid Interactive Menu List -->
+                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <template x-for="item in filteredProducts()">
+                        <div class="group bg-warmBeige dark:bg-darkCard border border-softBrown/10 rounded-sm overflow-hidden flex flex-col justify-between transition-all duration-300 hover:shadow-md">
+                            <div class="relative h-56 bg-espresso overflow-hidden">
+                                <img :src="item.img" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" :alt="item.name">
+                                <button @click="toggleFavorite(item.id)" class="absolute top-4 right-4 text-xs w-8 h-8 rounded-full bg-espresso/40 backdrop-blur-md text-white flex items-center justify-center hover:text-goldAccent transition">
+                                    <i class="fa-heart" :class="favorites.includes(item.id) ? 'fa-solid text-red-500' : 'fa-regular'"></i>
+                                </button>
+                            </div>
+                            <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
+                                <div>
+                                    <div class="flex justify-between items-start">
+                                        <h3 class="font-serif tracking-wide text-base font-medium group-hover:text-goldAccent transition-colors" x-text="item.name"></h3>
+                                        <span class="font-serif text-sm font-semibold text-goldAccent" x-text="item.price + ' SAR'"></span>
+                                    </div>
+                                    <p class="text-xs text-softBrown font-light mt-2 line-clamp-2" x-text="item.desc"></p>
+                                </div>
+                                <button @click="addToCart(item)" class="w-full bg-espresso text-white dark:bg-creamWhite dark:text-espresso py-3 text-[10px] uppercase tracking-widest font-bold rounded-sm transition duration-300 hover:bg-goldAccent hover:text-espresso">
+                                    <i class="fa-solid fa-plus mr-2"></i> Add to Order
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </template>
+
+        <!-- 4. RESERVATION PAGE -->
+        <template x-if="currentPage === 'reservation'">
+            <div class="max-w-4xl mx-auto px-6 py-12">
+                <div class="text-center max-w-xl mx-auto mb-12 space-y-2">
+                    <span class="text-xs uppercase tracking-widest text-goldAccent font-bold">Salon Experience</span>
+                    <h1 class="text-3xl font-serif tracking-wide">Reserve a Salon Table</h1>
+                    <p class="text-xs text-softBrown">Book a private workspace, meeting room, or social lounge zone within our Riyadh flagship venue.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 bg-warmBeige dark:bg-darkCard p-8 rounded-sm border border-softBrown/10">
+                    <!-- Form Control System -->
+                    <form @submit.prevent="submitReservation()" class="space-y-4">
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-widest text-softBrown font-bold mb-2">Select Lounge Area</label>
+                            <select x-model="reservationForm.zone" class="w-full bg-white dark:bg-espresso text-xs border border-softBrown/20 p-3 rounded-sm focus:outline-none focus:border-goldAccent">
+                                <option>The Espresso Bar Counter (Immersive)</option>
+                                <option>Mezzanine Executive Vault (Quiet Space)</option>
+                                <option>Sunken Terrazzo Garden Lounge</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[10px] uppercase tracking-widest text-softBrown font-bold mb-2">Date</label>
+                                <input type="date" x-model="reservationForm.date" class="w-full bg-white dark:bg-espresso text-xs border border-softBrown/20 p-3 rounded-sm focus:outline-none focus:border-goldAccent">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] uppercase tracking-widest text-softBrown font-bold mb-2">Time</label>
+                                <input type="time" x-model="reservationForm.time" class="w-full bg-white dark:bg-espresso text-xs border border-softBrown/20 p-3 rounded-sm focus:outline-none focus:border-goldAccent">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-widest text-softBrown font-bold mb-2">Guests</label>
+                            <select x-model="reservationForm.guests" class="w-full bg-white dark:bg-espresso text-xs border border-softBrown/20 p-3 rounded-sm focus:outline-none focus:border-goldAccent">
+                                <option>1 Guest</option>
+                                <option>2 Guests</option>
+                                <option>3-4 Guests</option>
+                                <option>Corporate Private Party (5+)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-widest text-softBrown font-bold mb-2">Special Requests / Preferences</label>
+                            <textarea rows="3" x-model="reservationForm.notes" placeholder="Dietary adjustments, specific seating config, valet request..." class="w-full bg-white dark:bg-espresso text-xs border border-softBrown/20 p-3 rounded-sm focus:outline-none focus:border-goldAccent"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-goldAccent text-espresso text-xs uppercase tracking-widest font-bold py-4 rounded-sm transition hover:bg-espresso hover:text-white dark:hover:bg-white">
+                            Lock Booking
+                        </button>
+                    </form>
+
+                    <!-- Seating Layout Diagram Visualizer -->
+                    <div class="flex flex-col justify-between border-t md:border-t-0 md:border-l border-softBrown/10 pt-8 md:pt-0 md:pl-8">
+                        <div class="space-y-4">
+                            <h3 class="font-serif text-sm uppercase tracking-wider text-goldAccent">Flagship Interactive Layout</h3>
+                            <div class="bg-espresso/5 dark:bg-white/5 border border-softBrown/20 p-4 rounded text-center text-xs space-y-4">
+                                <div class="font-bold border-b border-softBrown/10 pb-2 text-[10px] uppercase text-softBrown tracking-widest">Main Architectural Framework</div>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <div class="p-2 border border-goldAccent/40 bg-goldAccent/10 text-[10px]">BAR ZONE</div>
+                                    <div class="p-2 border border-softBrown/30 text-[10px]">MEZZANINE</div>
+                                    <div class="p-2 border border-softBrown/30 text-[10px]">GARDEN</div>
+                                </div>
+                                <div class="text-[10px] text-softBrown italic">Gold highlighting indicates the primary extraction view area.</div>
+                            </div>
+                        </div>
+                        <div class="text-xs text-softBrown font-light pt-4">
+                            <p><i class="fa-solid fa-circle-info mr-2 text-goldAccent"></i> Reservations hold a complimentary 15-minute window grace period.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- 5. GALLERY PAGE (MASONRY LIGHTBOX) -->
+        <template x-if="currentPage === 'gallery'">
+            <div class="max-w-7xl mx-auto px-6 py-12">
+                <div class="text-center max-w-xl mx-auto mb-16">
+                    <span class="text-xs uppercase tracking-widest text-goldAccent font-bold">Visual Anthology</span>
+                    <h1 class="text-3xl font-serif tracking-wide mt-2">Atmosphere & Extractions</h1>
+                    <div class="h-[1px] w-12 bg-softBrown/40 mx-auto mt-4"></div>
+                </div>
+
+                <!-- Masonry Style Premium Layout -->
+                <div class="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
+                    <template x-for="(imgUrl, idx) in galleryImages">
+                        <div class="break-inside-avoid relative overflow-hidden group cursor-pointer border border-softBrown/10 rounded-sm bg-warmBeige" @click="lightboxImg = imgUrl; lightboxOpen = true">
+                            <img :src="imgUrl" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="NOC Premium Asset">
+                            <div class="absolute inset-0 bg-espresso/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                <i class="fa-solid fa-expand text-white text-lg"></i>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </template>
+
+        <!-- 6. CONTACT PAGE -->
+        <template x-if="currentPage === 'contact'">
+            <div class="max-w-7xl mx-auto px-6 py-12">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                    
+                    <!-- Details & Hours -->
+                    <div class="space-y-8">
+                        <div>
+                            <span class="text-xs uppercase tracking-widest text-goldAccent font-bold">Connect With Us</span>
+                            <h1 class="text-4xl font-serif tracking-wide mt-2">NOC Flagship Hub</h1>
+                        </div>
+                        
+                        <div class="space-y-4 text-sm font-light">
+                            <div class="flex items-start space-x-4">
+                                <i class="fa-solid fa-location-dot text-goldAccent mt-1"></i>
+                                <div>
+                                    <p class="font-medium">Olaya District Main Tower, Ground Floor</p>
+                                    <p class="text-xs text-softBrown">Riyadh, Kingdom of Saudi Arabia</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <i class="fa-solid fa-phone text-goldAccent mt-1"></i>
+                                <div>
+                                    <p class="font-medium">+966 11 000 0000</p>
+                                    <p class="text-xs text-softBrown">Direct Booking Line</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <i class="fa-solid fa-envelope text-goldAccent mt-1"></i>
+                                <div>
+                                    <p class="font-medium">concierge@noc-cafe.com</p>
+                                    <p class="text-xs text-softBrown">Corporate Events & Collaborations</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Operational Schedule Table Grid -->
+                        <div class="bg-warmBeige dark:bg-darkCard p-6 rounded-sm border border-softBrown/10">
+                            <h3 class="font-serif text-base tracking-wide mb-4 text-goldAccent">Operational Hours</h3>
+                            <div class="space-y-2 text-xs uppercase tracking-wider">
+                                <div class="flex justify-between border-b border-softBrown/10 pb-2">
+                                    <span>Saturday — Thursday</span>
+                                    <span>06:00 AM — 01:00 AM</span>
+                                </div>
+                                <div class="flex justify-between pt-1">
+                                    <span>Friday Lounge Hours</span>
+                                    <span>01:00 PM — 02:00 AM</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ Mini-Accordion Component -->
+                        <div class="space-y-4">
+                            <h3 class="font-serif text-lg tracking-wide">Frequently Asked Questions</h3>
+                            <div class="border-b border-softBrown/20 pb-3" x-data="{ open: false }">
+                                <button @click="open = !open" class="w-full flex justify-between items-center text-xs uppercase tracking-wider font-semibold text-left">
+                                    <span>Do you accommodate remote working groups?</span>
+                                    <i class="fa-solid" :class="open ? 'fa-minus' : 'fa-plus'"></i>
+                                </button>
+                                <div x-show="open" class="text-xs text-softBrown mt-2 font-light leading-relaxed" x-transition>
+                                    Yes. Our dedicated Mezzanine level is custom architectural zone built with dense floor-embedded power grids and symmetrical fiber-optic internet connectivity arrays.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Social WhatsApp Trigger -->
+                        <div>
+                            <a href="https://wa.me/966110000000" target="_blank" class="inline-flex items-center space-x-3 bg-[#25D366] text-white px-6 py-4 rounded-sm font-semibold text-xs uppercase tracking-widest shadow-md hover:opacity-90 transition">
+                                <i class="fa-brands fa-whatsapp text-lg"></i>
+                                <span>Chat via WhatsApp Concierge</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Digital Contact Form & Maps Mock -->
+                    <div class="space-y-6">
+                        <form @submit.prevent="alert('Message conveyed to NOC Concierge.')" class="bg-warmBeige dark:bg-darkCard p-8 rounded-sm border border-softBrown/10 space-y-4">
+                            <h2 class="font-serif text-xl tracking-wide">Electronic Correspondence</h2>
+                            <div class="grid grid-cols-2 gap-4">
+                                <input type="text" placeholder="Name" required class="w-full text-xs bg-white dark:bg-espresso p-3 rounded-sm border border-softBrown/20 focus:outline-none focus:border-goldAccent">
+                                <input type="email" placeholder="Email" required class="w-full text-xs bg-white dark:bg-espresso p-3 rounded-sm border border-softBrown/20 focus:outline-none focus:border-goldAccent">
+                            </div>
+                            <input type="text" placeholder="Subject" class="w-full text-xs bg-white dark:bg-espresso p-3 rounded-sm border border-softBrown/20 focus:outline-none focus:border-goldAccent">
+                            <textarea rows="4" placeholder="Your message..." required class="w-full text-xs bg-white dark:bg-espresso p-3 rounded-sm border border-softBrown/20 focus:outline-none focus:border-goldAccent"></textarea>
+                            <button type="submit" class="w-full bg-espresso text-white dark:bg-white dark:text-espresso py-3 text-xs uppercase tracking-widest font-bold hover:bg-goldAccent hover:text-espresso transition">Dispatch Message</button>
+                        </form>
+
+                        <!-- Google Maps Minimalistic Placeholder Container -->
+                        <div class="w-full h-64 bg-espresso text-creamWhite rounded-sm border border-softBrown/20 relative overflow-hidden flex flex-col justify-center items-center p-6 text-center">
+                            <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#8c7a6b_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                            <i class="fa-solid fa-map-location-dot text-4xl text-goldAccent mb-3"></i>
+                            <p class="font-serif text-sm tracking-wide">Interactive Map Interface</p>
+                            <p class="text-[11px] text-softBrown max-w-xs mt-1">24.7136° N, 46.6753° E — Luxury Olaya Commercial Core Corridor, Riyadh</p>
+                            <a href="https://maps.google.com" target="_blank" class="mt-4 text-[10px] uppercase tracking-widest font-bold text-goldAccent border border-goldAccent/40 px-4 py-2 hover:bg-goldAccent hover:text-espresso transition">Open Navigation App</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </template>
+    </main>
+
+    <!-- ========================================== -->
+    <!-- SLIDE-OUT SHOPPING CART DRAWER            -->
+    <!-- ========================================== -->
+    <div x-show="cartOpen" class="fixed inset-0 z-50 overflow-hidden" x-transition style="display: none;">
+        <div class="absolute inset-0 bg-espresso/60 backdrop-blur-sm" @click="cartOpen = false"></div>
+        <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
+            <div class="w-screen max-w-md bg-white dark:bg-darkCard shadow-2xl flex flex-col justify-between">
+                
+                <!-- Drawer Header -->
+                <div class="p-6 border-b border-softBrown/10 flex justify-between items-center">
+                    <h2 class="font-serif text-lg tracking-wide">Your Extraction Order</h2>
+                    <button @click="cartOpen = false" class="text-softBrown hover:text-espresso dark:hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+                </div>
+
+                <!-- Items Main Container Box -->
+                <div class="flex-1 overflow-y-auto p-6 space-y-6">
+                    <template x-if="cart.length === 0">
+                        <div class="text-center py-20 text-softBrown space-y-2">
+                            <i class="fa-solid fa-bag-shopping text-3xl opacity-20"></i>
+                            <p class="text-xs uppercase tracking-widest">Order registry is vacant.</p>
+                        </div>
+                    </template>
+                    <template x-for="item in cart" :key="item.id">
+                        <div class="flex items-center space-x-4 border-b border-softBrown/5 pb-4">
+                            <img :src="item.img" class="w-16 h-16 object-cover rounded-sm border border-softBrown/10">
+                            <div class="flex-1">
+                                <div class="flex justify-between text-xs font-semibold uppercase tracking-wide">
+                                    <span x-text="item.name"></span>
+                                    <span class="font-serif text-goldAccent" x-text="(item.price * item.qty) + ' SAR'"></span>
+                                </div>
+                                <div class="flex justify-between items-center mt-2">
+                                    <!-- Quantity Adjustment Incrementor -->
+                                    <div class="flex items-center space-x-2 border border-softBrown/20 rounded">
+                                        <button @click="updateQty(item.id, -1)" class="px-2 py-0.5 text-xs hover:bg-softBrown/10">-</button>
+                                        <span class="text-xs font-medium px-1" x-text="item.qty"></span>
+                                        <button @click="updateQty(item.id, 1)" class="px-2 py-0.5 text-xs hover:bg-softBrown/10">+</button>
+                                    </div>
+                                    <button @click="removeFromCart(item.id)" class="text-[10px] text-red-500 hover:underline uppercase tracking-widest">Remove</button>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Drawer Operational Checkout Sticky Foot -->
+                <div class="p-6 border-t border-softBrown/10 bg-warmBeige dark:bg-espresso/50 space-y-4">
+                    <div class="space-y-2 text-xs">
+                        <div class="flex justify-between text-softBrown">
+                            <span>Subtotal</span>
+                            <span x-text="getCartSubtotal() + ' SAR'"></span>
+                        </div>
+                        <div class="flex justify-between text-softBrown">
+                            <span>VAT (15%)</span>
+                            <span x-text="getCartTax() + ' SAR'"></span>
+                        </div>
+                        <div class="flex justify-between font-serif text-base font-bold border-t border-softBrown/10 pt-2 text-espresso dark:text-creamWhite">
+                            <span>Total Due</span>
+                            <span class="text-goldAccent" x-text="getCartTotal() + ' SAR'"></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Fulfillment Selector Tab Box -->
+                    <div class="grid grid-cols-2 gap-2 p-1 bg-white dark:bg-espresso rounded border border-softBrown/10">
+                        <button @click="checkoutType = 'pickup'" :class="checkoutType === 'pickup' ? 'bg-goldAccent text-espresso font-bold' : 'text-softBrown'" class="py-2 text-[10px] uppercase tracking-widest rounded-sm transition">Curbside Pickup</button>
+                        <button @click="checkoutType = 'delivery'" :class="checkoutType === 'delivery' ? 'bg-goldAccent text-espresso font-bold' : 'text-softBrown'" class="py-2 text-[10px] uppercase tracking-widest rounded-sm transition">Olaya Express</button>
+                    </div>
+
+                    <!-- Checkout Trigger Button -->
+                    <button @click="processCheckout()" :disabled="cart.length === 0" class="w-full bg-espresso text-white dark:bg-creamWhite dark:text-espresso py-4 text-xs uppercase tracking-widest font-bold rounded-sm transition hover:bg-goldAccent hover:text-espresso dynamic-btn">
+                        Authorize Payment & Order
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- GALLERY MASONRY LIGHTBOX MODAL             -->
+    <!-- ========================================== -->
+    <div x-show="lightboxOpen" class="fixed inset-0 z-50 bg-espresso/95 backdrop-blur-md flex items-center justify-center p-4" style="display: none;" @click="lightboxOpen = false">
+        <button class="absolute top-6 right-6 text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
+        <img :src="lightboxImg" class="max-w-full max-h-[85vh] object-contain rounded shadow-2xl border border-white/10">
+    </div>
+
+    <!-- FLOATING FIXED MOBILE ORDER TRIGGER BUTTON -->
+    <div class="fixed bottom-6 right-6 z-30 lg:hidden">
+        <button @click="currentPage = 'menu'" class="bg-goldAccent text-espresso w-14 h-14 rounded-full shadow-xl flex items-center justify-center animate-bounce">
+            <i class="fa-solid fa-mug-saucer text-lg"></i>
+        </button>
+    </div>
+
+    <!-- COOKIE POLICY & COMPLIANCE CONSENT MODAL -->
+    <div x-show="cookieConsent" class="fixed bottom-6 left-6 max-w-sm z-50 bg-white dark:bg-darkCard border border-softBrown/20 p-4 shadow-xl rounded-sm text-xs space-y-3" style="display: none;">
+        <p class="text-softBrown font-light leading-relaxed">NOC Cafe deploys algorithmic cookies to ensure an elegant transactional flow. By interacting with the site, you acknowledge compliance.</p>
+        <div class="flex space-x-3">
+            <button @click="cookieConsent = false" class="bg-espresso text-white dark:bg-creamWhite dark:text-espresso px-4 py-2 font-bold uppercase tracking-widest text-[9px]">Acknowledge</button>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- FOOTER ARCHITECTURE                        -->
+    <!-- ========================================== -->
+    <footer class="bg-espresso text-creamWhite border-t border-softBrown/10 pt-20 pb-10">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 border-b border-softBrown/10 pb-16">
+            <div class="space-y-4">
+                <span class="font-serif text-2xl tracking-widest text-goldAccent font-bold">NOC</span>
+                <p class="text-xs text-creamWhite/50 font-light leading-relaxed">A modern contemporary architectural experiment specializing in meticulously extracted Arabica strains.</p>
+            </div>
+            <div>
+                <h4 class="text-xs uppercase tracking-widest text-goldAccent font-bold mb-4">Navigation Index</h4>
+                <div class="flex flex-col space-y-2 text-xs text-creamWhite/60 font-light">
+                    <a href="#" @click.prevent="currentPage = 'home'" class="hover:text-white">Home Lounge</a>
+                    <a href="#" @click.prevent="currentPage = 'menu'" class="hover:text-white">Botanical Menu</a>
+                    <a href="#" @click.prevent="currentPage = 'reservation'" class="hover:text-white">Salon Table Bookings</a>
+                </div>
+            </div>
+            <div>
+                <h4 class="text-xs uppercase tracking-widest text-goldAccent font-bold mb-4">Location Matrix</h4>
+                <p class="text-xs text-creamWhite/60 font-light leading-relaxed">Olaya District Towers<br>Ground Level Core Plaza<br>Riyadh, Saudi Arabia</p>
+            </div>
+            <!-- Interactive Email Subscriptions Node -->
+            <div>
+                <h4 class="text-xs uppercase tracking-widest text-goldAccent font-bold mb-4">The NOC Circular</h4>
+                <form @submit.prevent="alert('Subscribed to Circular.')" class="space-y-2">
+                    <input type="email" placeholder="secure-email@domain.com" required class="w-full bg-white/5 border border-white/10 text-xs text-white p-3 rounded-sm focus:outline-none focus:border-goldAccent">
+                    <button type="submit" class="w-full bg-goldAccent text-espresso text-[10px] font-bold uppercase tracking-widest py-3 hover:bg-white hover:text-espresso transition">Subscribe</button>
+                </form>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-6 pt-8 flex flex-col md:flex-row justify-between items-center text-[11px] text-creamWhite/40 tracking-wider">
+            <p>&copy; 2026 NOC Cafe. All Rights Reserved. Crafted for Riyadh Visionaries.</p>
+            <div class="flex space-x-6 mt-4 md:mt-0 text-xs">
+                <a href="#" class="hover:text-goldAccent"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="hover:text-goldAccent"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="#" class="hover:text-goldAccent"><i class="fa-brands fa-linkedin-in"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========================================== -->
+    <!-- MASTER STATE DRIVER (ALPINE.JS CONTROLLER) -->
+    <!-- ========================================== -->
+    <script>
+        function nocApp() {
+            return {
+                // Application Interface States
+                currentPage: 'home',
+                lang: 'en',
+                isRtl: false,
+                darkMode: true,
+                mobileMenuOpen: false,
+                cartOpen: false,
+                lightboxOpen: false,
+                lightboxImg: '',
+                cookieConsent: true,
+                scrollY: 0,
+                scrollProgress: 0,
+                
+                // Interactive Data Filters
+                activeCategory: 'Espresso Bar',
+                searchQuery: '',
+                checkoutType: 'pickup',
+                
+                favorites: [],
+                cart: [],
+                cartCount: 0,
+                
+                reservationForm: {
+                    zone: 'The Espresso Bar Counter (Immersive)',
+                    date: '',
+                    time: '',
+                    guests: '2 Guests',
+                    notes: ''
+                },
+
+                // Centralized Product Catalog Datastore array
+                categories: ['Espresso Bar', 'Cold Extraction', 'Signature Infusions', 'Artisanal Bakery'],
+                products: [
+                    { id: 1, name: 'Prototypical Cortado', category: 'Espresso Bar', price: 24, desc: 'Equal parts precision-extracted espresso and textured microfoam milk.', signature: true, img: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=400&q=80' },
+                    { id: 2, name: 'Kyoto-Style Cold Drip', category: 'Cold Extraction', price: 32, desc: 'Slow atmospheric multi-hour immersion extraction using organic ice melt layers.', signature: true, img: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=400&q=80' },
+                    { id: 3, name: 'The Najd Spanish Latte', category: 'Signature Infusions', price: 36, desc: 'Condensed balance sweet profiles infused with localized organic cardamom extracts.', signature: true, img: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=400&q=80' },
+                    { id: 4, name: 'Uji Ceremonial Matcha', category: 'Signature Infusions', price: 34, desc: 'Whisked organic first-harvest stone ground emerald tea profiles.', signature: false, img: 'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?auto=format&fit=crop&w=400&q=80' },
+                    { id: 5, name: 'Pistachio Saffron Tart', category: 'Artisanal Bakery', price: 42, desc: 'Flaky shortcrust housing dense regional nuts and premium Iranian saffron curd.', signature: false, img: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=400&q=80' },
+                    { id: 6, name: 'Flat White Minimalist', category: 'Espresso Bar', price: 24, desc: 'Velvety smooth ristretto forward extraction with tight microfoam setting.', signature: false, img: 'https://images.unsplash.com/photo-1577968897966-3d4325b36b61?auto=format&fit=crop&w=400&q=80' }
+                ],
+
+                galleryImages: [
+                    'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1445116572660-236099ec97a0?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1507133750040-4a8f57021571?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1498804103079-a6351b050096?auto=format&fit=crop&w=600&q=80'
+                ],
+
+                // Localization Matrix Core Array
+                translations: {
+                    en: {
+                        navHome: 'Home', navAbout: 'About', navMenu: 'Menu', navGallery: 'Gallery', navReserve: 'Reserve', navContact: 'Contact',
+                        heroSub: 'Specialty Coffee Roasters', heroTitle: 'Architectural Liquid Artistry', heroDesc: 'Sourcing ultra-high-elevation micro-lots tailored for the cultural visionaries of Riyadh.',
+                        btnOrder: 'Order Delivery', btnReserve: 'Reserve Table', promoText: 'Complimentary Valet Parking available at our Olaya Tower Flagship Entrance.'
+                    },
+                    ar: {
+                        navHome: 'الرئيسية', navAbout: 'فلسفتنا', navMenu: 'القائمة', navGallery: 'المعرض', navReserve: 'الحجوزات', navContact: 'التواصل',
+                        heroSub: 'محامص القهوة المختصة', heroTitle: 'فن صياغة القهوة المبتكرة', heroDesc: 'نستورد محاصيل نادرة من المزارع الأعلى ارتفاعاً لتلائم النخبة ورواد الرؤية في الرياض.',
+                        btnOrder: 'طلب التوصيل', btnReserve: 'حجز طاولة', promoText: 'خدمة إيقاف السيارات المجانية متاحة عند مدخل برج أوليا الرئيسي.'
+                    }
+                },
+
+                init() {
+                    // Window Scroll Track Loop Engine
+                    window.addEventListener('scroll', () => {
+                        this.scrollY = window.scrollY;
+                        let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                        this.scrollProgress = (window.scrollY / height) * 100;
+                    });
+                },
+
+                toggleLanguage() {
+                    this.lang = this.lang === 'en' ? 'ar' : 'en';
+                    this.isRtl = this.lang === 'ar';
+                },
+
+                filteredProducts() {
+                    return this.products.filter(p => {
+                        const matchesCategory = p.category === this.activeCategory;
+                        const matchesSearch = p.name.toLowerCase().includes(this.searchQuery.toLowerCase()) || 
+                                              p.desc.toLowerCase().includes(this.searchQuery.toLowerCase());
+                        return matchesCategory && matchesSearch;
+                    });
+                },
+
+                // Micro-State Cart Operations Backend Emulation
+                addToCart(product) {
+                    let existing = this.cart.find(item => item.id === product.id);
+                    if (existing) {
+                        existing.qty++;
+                    } else {
+                        this.cart.push({ ...product, qty: 1 });
+                    }
+                    this.recalcCart();
+                },
+
+                updateQty(id, delta) {
+                    let item = this.cart.find(item => item.id === id);
+                    if (item) {
+                        item.qty += delta;
+                        if (item.qty <= 0) {
+                            this.cart = this.cart.filter(i => i.id !== id);
+                        }
+                    }
+                    this.recalcCart();
+                },
+
+                removeFromCart(id) {
+                    this.cart = this.cart.filter(item => item.id !== id);
+                    this.recalcCart();
+                },
+
+                recalcCart() {
+                    this.cartCount = this.cart.reduce((acc, item) => acc + item.qty, 0);
+                },
+
+                getCartSubtotal() { return this.cart.reduce((acc, item) => acc + (item.price * item.qty), 0); },
+                getCartTax() { return Math.round(this.getCartSubtotal() * 0.15); },
+                getCartTotal() { return this.getCartSubtotal() + this.getCartTax(); },
+
+                toggleFavorite(id) {
+                    if (this.favorites.includes(id)) {
+                        this.favorites = this.favorites.filter(fId => fId !== id);
+                    } else {
+                        this.favorites.push(id);
+                    }
+                },
+
+                submitReservation() {
+                    alert(`Reservation Registered successfully:\nZone: ${this.reservationForm.zone}\nDate: ${this.reservationForm.date} at ${this.reservationForm.time}`);
+                    this.reservationForm = { zone: 'The Espresso Bar Counter (Immersive)', date: '', time: '', guests: '2 Guests', notes: '' };
+                },
+
+                processCheckout() {
+                    alert(`Transaction Authorized.\nYour order via [${this.checkoutType.toUpperCase()}] is entering extraction optimization queue.`);
+                    this.cart = [];
+                    this.recalcCart();
+                    this.cartOpen = false;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
